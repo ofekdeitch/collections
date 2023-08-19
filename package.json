@@ -46,5 +46,8 @@
     "deep-equal": "^2.2.1",
     "farmhash": "^3.3.0",
     "json-stable-stringify": "^1.0.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
