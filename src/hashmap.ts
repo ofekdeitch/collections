@@ -132,6 +132,46 @@ export class HashMap<K, V> {
 
     return newMap;
   }
+
+  static fromArray<T, K>(values: T[], getKey: (value: T) => K): HashMap<K, T>;
+  static fromArray<T, K, V>(values: T[], getKey: (value: T) => K, getValue: (value: T) => V): HashMap<K, V>;
+
+  static fromArray<T, K, V = void>(values: T[], getKey: (value: T) => K, getValue?: (value: T) => V) {
+    if (!getValue) {
+      return this.fromArray(values, getKey, (value) => value);
+    }
+
+    const map = new HashMap<K, V>();
+
+    for (const val of values) {
+      const key = getKey(val);
+      const value = getValue(val);
+
+      map.set(key, value);
+    }
+
+    return map;
+  }
+
+  static merge<K, V>(
+    map1: HashMap<K, V>,
+    map2: HashMap<K, V>,
+    onConflict: OnConflictCallback<V>,
+  ): HashMap<K, V> {
+    const map = map1.copy();
+
+    for (const [key, value] of map2.entries()) {
+      const existingEntry = map.get(key);
+
+      if (existingEntry) {
+        map.set(key, onConflict(existingEntry, value));
+      } else {
+        map.set(key, value);
+      }
+    }
+
+    return map;
+  }
 }
 
 interface Tuple<K, V> {
@@ -140,36 +180,5 @@ interface Tuple<K, V> {
 }
 
 type Bucket<K, V> = Tuple<K, V>[];
-
-export function toMap<T, K>(values: T[], getKey: (val: T) => K): HashMap<K, T> {
-  const map = new HashMap<K, T>();
-
-  for (const val of values) {
-    const key = getKey(val);
-    map.set(key, val);
-  }
-
-  return map;
-}
-
-export function mergeHashMaps<K, V>(
-  map1: HashMap<K, V>,
-  map2: HashMap<K, V>,
-  onConflict: OnConflictCallback<V>,
-): HashMap<K, V> {
-  const map = map1.copy();
-
-  for (const [key, value] of map2.entries()) {
-    const existingEntry = map.get(key);
-
-    if (existingEntry) {
-      map.set(key, onConflict(existingEntry, value));
-    } else {
-      map.set(key, value);
-    }
-  }
-
-  return map;
-}
 
 type OnConflictCallback<V> = (value1: V, value2: V) => V;

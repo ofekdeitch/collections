@@ -6,4 +6,9 @@ describe("Exports", () => {
         map.set("foo", 1);
         expect(map.get("foo")).toEqual(1);
     });
+    it("exports the HashSet class", () => {
+        const map = new Exports.HashSet<string>();
+        map.add("foo");
+        expect(map.contains("foo")).toBeTruthy();
+    });
 });
