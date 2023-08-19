@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { HashMap, mergeHashMaps } from './hashmap';
+import { HashMap } from './hashmap';
 
 describe('Hashmap', () => {
   it('should return a value when a key is set', () => {
@@ -223,12 +223,13 @@ describe('Hashmap', () => {
     map2.set(key2, value2);
     map2.set(mutualKey, mutualValue2);
 
-    const merged = mergeHashMaps(map1, map2, (v1, v2) => v1 + v2);
+    const merged = HashMap.merge(map1, map2, (v1, v2) => v1 + v2);
 
     expect(merged.get(key1)).toEqual(value1);
     expect(merged.get(key2)).toEqual(value2);
     expect(merged.get(mutualKey)).toEqual(mutualValue1 + mutualValue2);
   });
+
 });
 
 interface InternationalId {
